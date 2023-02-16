@@ -8,57 +8,7 @@ local prometheus_source = {
 
 local grr = import 'jsonnet-libs/grizzly/grizzly.libsonnet';
 
-
-local node3_dashboard = grafana.dashboard.new(
-    'node3_stats_grr.json',
-    description='System metrics for node3',
-    tags=['node','linux']
-    )
-.addTemplate(
-  grafana.template.datasource(
-    'PROMETHEUS_DS',
-    'prometheus',
-    'Prometheus',
-    hide='label',
-  )
-)
-.addPanel(
-  grafana.graphPanel.new(
-    'Load Average',
-    format='s',
-    datasource=prometheus_source,
-    span=2
-  ).addTarget(
-    prometheus.target(
-      'node_load5{instance=\"node3.example.com:9100\"}',
-      datasource="$PROMETHEUS_DS",
-      format='time_series',
-      legendFormat= "{{instance}} 5minAverage"
-    )
-  )
-  .addTarget(
-    prometheus.target(
-      'node_load1{instance=\"node3.example.com:9100\"}',
-      datasource="$PROMETHEUS_DS",
-      format='time_series',
-      legendFormat= "{{instance}} 1minAverage"
-    )
-  )
-  .addTarget(
-    prometheus.target(
-      'node_load15{instance=\"node3.example.com:9100\"}',
-      datasource="$PROMETHEUS_DS",
-      format='time_series',
-      legendFormat= "{{instance}} 15minAverage"
-    )
-  ),
-   gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 15,
-  }
-);
+local node3_dashboard = import 'dashboard.jsonnet';
 
 local resource = {
   defaultApiVersion:: 'grizzly.grafana.com/v1alpha1',
@@ -103,7 +53,7 @@ local dashboar_simple = {
     folder.new('sample', 'Sample'),
   ],  
   dashboards: [
-    grr.dashboard.new('node3_dashboard', node3_dashboard) + grr.resource.addMetadata('folder', 'sample'),
+    grr.dashboard.new('node3_dashboard', node3_dashboard.new()) + grr.resource.addMetadata('folder', 'sample'),
      grr.dashboard.new('prod-overview', dashboar_simple)
     + grr.resource.addMetadata('folder', 'sample')
   ]

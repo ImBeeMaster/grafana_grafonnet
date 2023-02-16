@@ -8,7 +8,7 @@ local prometheus_source = {
 
 // Node 3 monitoring dashboard with load average monitoring
 local node3_dashboard = grafana.dashboard.new(
-    'node3_stats.json',
+    'node3_stats',
     description='System metrics for node3',
     tags=['node','linux']
     )
@@ -89,13 +89,4 @@ local folder =  {
       }),
   };
 
-
-
-{
-  grafanaDashboards:: {
-    node3_dashboard: node3_dashboard
-  },
-  folders: [
-    folder.new('sample', 'Sample'),
-  ],
-}
+{ new():: node3_dashboard }
